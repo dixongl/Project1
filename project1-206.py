@@ -1,59 +1,112 @@
+
+# coding: utf-8
+
+# In[1]:
+
+
+
 import os
 import filecmp
 from dateutil.relativedelta import *
 from datetime import date
 
 
-def getData(file):
-# get a list of dictionary objects from the file
-#Input: file name
-#Ouput: return a list of dictionary objects where
-#the keys are from the first row in the data. and the values are each of the other rows
+# In[ ]:
 
-	pass
+
+
+
+
+# In[2]:
+
+
+def getData(file):
+    infile = open(file, 'r')
+    infile_string = infile.readlines()
+    template = infile_string[0].split(",")
+    lst_of_str = infile_string[1:]
+    getData_lst = []
+
+    for string in lst_of_str:
+        lst = string.split(",")
+        d = {template[0]: lst[0], template[1]: lst[1], template[2]:lst[2], template[3]:lst[3], template[4].strip('\n'):lst[4].strip('\n')}
+        getData_lst.append(d)
+
+    infile.close()
+    return getData_lst
+
+
+
 
 def mySort(data,col):
-# Sort based on key/column
-#Input: list of dictionaries and col (key) to sort on
-#Output: Return the first item in the sorted list as a string of just: firstName lastName
-
-	pass
+    dex = sorted(data, key= lambda x : x[col])
+    lst = []
+    for d in dex:
+        string = d['First'] + " " + d["Last"]
+        lst.append(string)
+    return lst[0]
 
 
 def classSizes(data):
-# Create a histogram
-# Input: list of dictionaries
-# Output: Return a list of tuples sorted by the number of students in that class in
-# descending order
-# [('Senior', 26), ('Junior', 25), ('Freshman', 21), ('Sophomore', 18)]
-
-	pass
+    dic = {}
+    for d in data:
+        if d['Class'] not in dic.keys():
+            dic[d["Class"]] = 1
+        else:
+            dic[d["Class"]] = dic[d["Class"]] + 1
+    new_dic = sorted(dic.keys(), key=lambda x : dic[x], reverse = True)
+    fnal_lst = []
+    for ky in new_dic:
+        fnal_lst.append((ky, dic[ky]))
+    return fnal_lst
 
 
 def findMonth(a):
-# Find the most common birth month form this data
-# Input: list of dictionaries
-# Output: Return the month (1-12) that had the most births in the data
+    tally_d = {}
+    for line in a:
+        x = line['DOB'].split('/')
+        xx = x[0]
+        if xx not in tally_d.keys():
+            tally_d[xx] = 1
+        else:
+            tally_d[xx] = tally_d[xx] + 1
+    return int(sorted(tally_d.keys(), key = lambda x : tally_d[x], reverse = True)[0])
 
-	pass
 
 def mySortPrint(a,col,fileName):
-#Similar to mySort, but instead of returning single
-#Student, the sorted data is saved to a csv file.
-# as fist,last,email
-#Input: list of dictionaries, col (key) to sort by and output file name
-#Output: No return value, but the file is written
-
-	pass
+    outfile = open(fileName, "w")
+    sort = sorted(a, key = lambda x : x[col])
+    sorted_lines = []
+    for line in sort:
+        sorted_lines.append([line['First'],line['Last'],line['Email']])
+    for lst in sorted_lines:
+        outfile.write(lst[0] + ',' + lst[1] + ',' + lst[2] + '\n')
+    outfile.close()
+    return
 
 def findAge(a):
-# def findAge(a):
-# Input: list of dictionaries
-# Output: Return the average age of the students and round that age to the nearest
-# integer.  You will need to work with the DOB and the current date to find the current
-# age in years.
+    current_date = input("Please write todays date in the following format: mm/dd/yyy").split('/')
+    dates = []
+    for d in a:
+        dates.append(d["DOB"].split('/'))
+    total_age = 0
+    for lst in dates:
+        if lst[0] == current_date[0]:
+            if int(lst[1]) > int(current_date[1]):
+                total_age += (int(current_date[2]) - int(lst[2]) + 1)
+            else:
+                total_age += int(current_date[2]) - int(lst[2])
+        elif int(lst[0]) > int(current_date[0]):
+            total_age += (int(current_date[2]) - int(lst[2]) + 1)
+        else:
+            total_age += int(current_date[2]) - int(lst[2])
+    num = len(a)
+    avg = total_age // num
+    return avg
 
-	pass
+
+# In[3]:
+
 
 
 ################################################################
@@ -77,7 +130,7 @@ def main():
 	total = 0
 	print("Read in Test data and store as a list of dictionaries")
 	data = getData('P1DataA.csv')
-	data2 = getData('P1DataB.csv')
+	data2 = getData('P1DataB2.csv')
 	total += test(type(data),type([]),50)
 
 	print()
@@ -115,3 +168,25 @@ def main():
 # Standard boilerplate to call the main() function that tests all your code
 if __name__ == '__main__':
     main()
+
+
+# In[4]:
+
+
+##my own test for mySortPrint
+infile1 = open("outfile.csv", "r")
+infile2 = open("results.csv", 'r')
+lines1 = infile1.readlines()
+lines2 = infile2.readlines()
+counter = 0
+for i in range(len(lines1)):
+    if lines1[i] == lines2[i]:
+        counter += 1
+    else:
+        print(lines1[i])
+        print(lines2[i])
+print(counter)
+infile1.close()
+infile2.close()
+
+
