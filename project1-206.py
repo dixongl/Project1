@@ -17,7 +17,7 @@ from datetime import date
 
 
 
-# In[2]:
+# In[4]:
 
 
 def getData(file):
@@ -105,7 +105,7 @@ def findAge(a):
     return avg
 
 
-# In[3]:
+# In[5]:
 
 
 
@@ -170,7 +170,7 @@ if __name__ == '__main__':
     main()
 
 
-# In[4]:
+# In[6]:
 
 
 ##my own test for mySortPrint
@@ -188,5 +188,4 @@ for i in range(len(lines1)):
 print(counter)
 infile1.close()
 infile2.close()
-
 
